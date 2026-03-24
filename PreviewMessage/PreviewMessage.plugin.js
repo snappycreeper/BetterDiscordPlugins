@@ -6,7 +6,6 @@
  * @authorId 1031925360239058974
  * @source https://github.com/snappycreeper/BetterDiscordPlugins/tree/main/PreviewMessage
  * @updateurl https://raw.githubusercontent.com/snappycreeper/BetterDiscordPlugins/main/PreviewMessage/PreviewMessage.plugin.js
- * 
  */
 
 module.exports = class PreviewMessage {
@@ -34,7 +33,6 @@ module.exports = class PreviewMessage {
                 res?.props?.children &&
                 Array.isArray(res.props.children)
             ) {
-                // 🔒 duplicate protection (fixed)
                 if (res.props.children.some(child =>
                     child?.props?.className === "pm-preview-btn" ||
                     child?.props?.children?.props?.className === "pm-preview-btn"
@@ -77,7 +75,6 @@ module.exports = class PreviewMessage {
                     button
                 );
 
-                // ✅ CORRECT tooltip (same as InvisibleTyping)
                 const withTooltip = React.createElement(
                     Components.Tooltip,
                     { text: "Preview Message" },

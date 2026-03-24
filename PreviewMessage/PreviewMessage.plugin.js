@@ -1,11 +1,12 @@
 /**
  * @name PreviewMessage
  * @author SnappyCreeper
- * @description Allows you to preview a message before you send it. (Original by TheCommieAxolotl)
+ * @description Instantly preview how your message will look before sending it. (Original by TheCommieAxolotl)
  * @version 1.0.4
  * @authorId 1031925360239058974
- * @source https://github.com/TheCommieAxolotl/BetterDiscord-Stuff/tree/main/PreviewMessage
- * @updateurl https://raw.githubusercontent.com/TheCommieAxolotl/BetterDiscord-Stuff/main/PreviewMessage/PreviewMessage.plugin.js
+ * @source https://github.com/snappycreeper/BetterDiscordPlugins/tree/main/PreviewMessage
+ * @updateurl https://raw.githubusercontent.com/snappycreeper/BetterDiscordPlugins/main/PreviewMessage/PreviewMessage.plugin.js
+ * 
  */
 
 module.exports = class PreviewMessage {

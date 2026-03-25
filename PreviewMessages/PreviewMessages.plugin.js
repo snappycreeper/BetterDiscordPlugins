@@ -1,5 +1,5 @@
 /**
- * @name PreviewMessage
+ * @name PreviewMessages
  * @author SnappyCreeper
  * @description Instantly preview how your message will look before sending it. (Original by TheCommieAxolotl)
  * @version 1.0.4

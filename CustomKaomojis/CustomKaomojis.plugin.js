@@ -2,7 +2,7 @@
  * @name CustomKaomojis
  * @author SnappyCreeper
  * @description You can add custom kaomojis!
- * @version 1.0.0
+ * @version 1.0.1
  * @authorId 1031925360239058974
  * @source https://github.com/snappycreeper/BetterDiscordPlugins/tree/main/CustomKaomojis
  * @updateurl https://raw.githubusercontent.com/snappycreeper/BetterDiscordPlugins/main/CustomKaomojis/CustomKaomojis.plugin.js
@@ -20,18 +20,45 @@ module.exports = class CustomKaomojis {
             BdApi.Data.save("CustomKaomojis", "texts", this.texts);
         }
 
+        BdApi.DOM.addStyle("custom-kaomoji-scroll", `
+        .ck-container {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ck-scroll .ck-container {
+            justify-content: flex-start;
+        }
+
+        .ck-text {
+            display: inline-block; 
+            white-space: nowrap;
+        }
+
+        .ck-scroll:hover .ck-text.needs-scroll {
+            animation: ck-scroll 6s linear infinite;
+        }
+
+        @keyframes ck-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        `);
+
         this.observer = new MutationObserver(() => this.inject());
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
 
     stop() {
         this.observer?.disconnect();
+        BdApi.DOM.removeStyle("custom-kaomoji-scroll");
     }
 
     inject() {
         const container = document.querySelector(".kaomojiList__81b99");
         if (!container) return;
-
         if (container.querySelector(".custom-kaomoji-category")) return;
 
         const category = document.createElement("div");
@@ -45,7 +72,6 @@ module.exports = class CustomKaomojis {
 
         const grid = document.createElement("div");
         grid.className = "kaomojiGrid__81b99";
-
         this.grid = grid;
 
         const createButton = (obj, isAdd = false) => {
@@ -55,21 +81,29 @@ module.exports = class CustomKaomojis {
             const btn = document.createElement("button");
             btn.className = "button_a22cb0 sm_a22cb0 secondary_a22cb0 hasText_a22cb0 fullWidth_a22cb0";
 
-            const inner = document.createElement("div");
-            inner.className = "buttonChildrenWrapper_a22cb0";
+            const container = document.createElement("div");
+            container.className = "ck-container";
 
-            const inner2 = document.createElement("div");
-            inner2.className = "buttonChildren_a22cb0";
+            const text = document.createElement("span");
+            text.className = "ck-text";
 
-            const span = document.createElement("span");
-            span.className = "lineClamp1__4bd52 text-sm/medium_cf4812";
-            span.setAttribute("data-text-variant", "text-sm/medium");
-            span.textContent = isAdd ? "+" : obj.text;
+            const content = isAdd ? "+" : obj.text;
 
-            inner2.appendChild(span);
-            inner.appendChild(inner2);
-            btn.appendChild(inner);
+            text.textContent = content;
+
+            container.appendChild(text);
+            btn.appendChild(container);
             wrapper.appendChild(btn);
+
+            if (!isAdd) {
+                setTimeout(() => {
+                    if (text.scrollWidth > container.clientWidth) {
+                        text.textContent = content + "     " + content;
+                        text.classList.add("needs-scroll");
+                        btn.classList.add("ck-scroll");
+                    }
+                }, 0);
+            }
 
             if (isAdd) {
                 btn.onclick = () => this.openModal();
@@ -88,10 +122,7 @@ module.exports = class CustomKaomojis {
         this.createButton = createButton;
 
         grid.appendChild(createButton(null, true));
-
-        this.texts.forEach(obj => {
-            grid.appendChild(createButton(obj));
-        });
+        this.texts.forEach(obj => grid.appendChild(createButton(obj)));
 
         category.appendChild(label);
         category.appendChild(grid);
@@ -103,19 +134,15 @@ module.exports = class CustomKaomojis {
         if (!this.grid) return;
 
         this.grid.innerHTML = "";
-
         this.grid.appendChild(this.createButton(null, true));
-
-        this.texts.forEach(obj => {
-            this.grid.appendChild(this.createButton(obj));
-        });
+        this.texts.forEach(obj => this.grid.appendChild(this.createButton(obj)));
     }
 
     openModal() {
         let value = "";
 
         BdApi.UI.showConfirmationModal(
-            "Add Custom Text",
+            "Add Kaomoji",
             BdApi.React.createElement("textarea", {
                 placeholder: "Enter text...",
                 style: {
@@ -133,12 +160,8 @@ module.exports = class CustomKaomojis {
                     outline: "none",
                     transition: "border 0.15s ease"
                 },
-                onFocus: (e) => {
-                    e.target.style.border = "1px solid var(--brand-experiment)";
-                },
-                onBlur: (e) => {
-                    e.target.style.border = "1px solid var(--background-tertiary)";
-                },
+                onFocus: (e) => e.target.style.border = "1px solid var(--brand-experiment)",
+                onBlur: (e) => e.target.style.border = "1px solid var(--background-tertiary)",
                 onChange: (e) => value = e.target.value
             }),
             {
@@ -162,15 +185,8 @@ module.exports = class CustomKaomojis {
         const { ContextMenu } = BdApi;
 
         ContextMenu.open(e, ContextMenu.buildMenu([
-            {
-                label: "Edit",
-                action: () => this.editText(obj)
-            },
-            {
-                label: "Delete",
-                danger: true,
-                action: () => this.deleteText(obj)
-            }
+            { label: "Edit", action: () => this.editText(obj) },
+            { label: "Delete", danger: true, action: () => this.deleteText(obj) }
         ]));
     }
 
@@ -178,7 +194,7 @@ module.exports = class CustomKaomojis {
         let value = obj.text;
 
         BdApi.UI.showConfirmationModal(
-            "Edit Custom Text",
+            "Edit Kaomoji",
             BdApi.React.createElement("textarea", {
                 defaultValue: obj.text,
                 style: {
@@ -196,19 +212,13 @@ module.exports = class CustomKaomojis {
                     outline: "none",
                     transition: "border 0.15s ease"
                 },
-                onFocus: (e) => {
-                    e.target.style.border = "1px solid var(--brand-experiment)";
-                },
-                onBlur: (e) => {
-                    e.target.style.border = "1px solid var(--background-tertiary)";
-                },
+                onFocus: (e) => e.target.style.border = "1px solid var(--brand-experiment)",
+                onBlur: (e) => e.target.style.border = "1px solid var(--background-tertiary)",
                 onChange: (e) => value = e.target.value
             }),
             {
                 confirmText: "Save",
                 onConfirm: () => {
-                    if (!value.trim()) return;
-
                     const item = this.texts.find(t => t.id === obj.id);
                     if (item) {
                         item.text = value;
@@ -232,34 +242,22 @@ module.exports = class CustomKaomojis {
 
         editor.focus();
 
-        const event = new InputEvent("beforeinput", {
+        editor.dispatchEvent(new InputEvent("beforeinput", {
             bubbles: true,
             cancelable: true,
             inputType: "insertText",
             data: text
-        });
+        }));
 
-        editor.dispatchEvent(event);
-
-        const event2 = new InputEvent("input", {
+        editor.dispatchEvent(new InputEvent("input", {
             bubbles: true,
             cancelable: true,
             inputType: "insertText",
             data: text
-        });
-
-        editor.dispatchEvent(event2);
-
-        document.body.dispatchEvent(new MouseEvent("mousedown", {
-            bubbles: true
         }));
 
-        document.body.dispatchEvent(new MouseEvent("mouseup", {
-            bubbles: true
-        }));
-
-        document.body.dispatchEvent(new MouseEvent("click", {
-            bubbles: true
-        }));
+        document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+        document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     }
 };

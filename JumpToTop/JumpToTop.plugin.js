@@ -1,11 +1,11 @@
 /**
  * @name JumpToTop
  * @author SnappyCreeper
- * @description Adds a button to the channel header allowing you to jump to first message in a channel. (Origianl by Huderon)
+ * @description Adds a button to the channel header allowing you to jump to first message in a channel. (Original by Huderon)
  * @version 1.0.5
  * @authorId 1031925360239058974
- * @source https://github.com/snappycreeper/BetterDiscordPlugins/tree/main/CustomKaomojis
- * @updateurl https://raw.githubusercontent.com/snappycreeper/BetterDiscordPlugins/main/CustomKaomojis/CustomKaomojis.plugin.js
+ * @source https://github.com/snappycreeper/BetterDiscordPlugins/tree/main/JumpToTop
+ * @updateurl https://raw.githubusercontent.com/snappycreeper/BetterDiscordPlugins/main/JumpToTop/JumpToTop.plugin.js
  */
 
 "use strict";

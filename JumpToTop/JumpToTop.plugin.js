@@ -37,7 +37,7 @@ function ToolbarComponent() {
         onClick: () => {
           transitionTo(location.pathname + "/0");
         },
-        style: { cursor: "pointer" }, // fallback so it's always clickable even if classes fail
+        style: { cursor: "pointer" },
       },
       /* @__PURE__ */ BdApi.React.createElement(
         "svg",
@@ -59,7 +59,6 @@ function ToolbarComponent() {
   );
 }
 
-// src/plugins/JumpToTop/index.jsx
 var [ChannelHeader, ChannelHeaderKey] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byKeys("Icon", "Divider"));
 module.exports = class MentionFilter {
   constructor(meta) {
@@ -67,7 +66,7 @@ module.exports = class MentionFilter {
   }
   start() {
     BdApi.Patcher.after(this.meta.name, ChannelHeader, ChannelHeaderKey, (_, [{toolbar}], returnValue) => {
-      if (!toolbar) return; // guard: toolbar prop missing entirely
+      if (!toolbar) return; 
       const Toolbar = BdApi.Utils.findInTree(
         toolbar,
         (prop) => Array.isArray(prop) && prop.some((element) => element?.key === "pins"),
